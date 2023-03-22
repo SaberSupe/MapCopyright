@@ -1,0 +1,18 @@
+name: MapCopyright
+version: '${project.version}'
+main: saber.mapcopyright.MapCopyright
+api-version: 1.19
+authors: [ Saber ]
+description: Adds copyrights to mincraft maps to stop others making copies
+website: https://github.com/SaberSupe
+commands:
+  copyright:
+    description: copyrights
+permissions:
+  mapcopyright.copyright:
+    description: Allows players to make and manage copyrights
+    default: true
+  mapcopyright.force:
+    description: Allows the player to make changes to any copyright
+    default: op
+

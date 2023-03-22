@@ -1,0 +1,57 @@
+#This is the config file
+useFlatFileStorage: true
+useSQL: false
+MySQL: # For copyright storage
+  address: 0.0.0.0
+  port: 3306
+  database: database1
+  username: database1
+  password: 'password'
+
+#Messages
+msg:
+  NoCommandPerms: "&cYou do not have permission to use this command"
+  NoCopyPerms: "&aYou do not have permission to copy this map"
+  NotPlayer: "&cMust be a Player to use this command"
+  InvalidSubCommand: "&cSubcommand not recognized"
+  PlayerNotFound: "&cPlayer Not Found"
+  GiveFullTrust: "&aFull Trust given to {ign}"
+  TakeFullTrust: "&aFull Trust removed from {ign}"
+  GiveFullTrustPublic: "&aGranted full trust to public"
+  TakeFullTrustPublic: "&aFull trust removed from public"
+  FullTrustList:
+    Owner: "&bFull trust list for {ign}"
+    List: "&bTrusted: {trustlist}"
+    Public: "&bPublic: {public}"
+  HoldingLockedMap: "&cMust be holding locked map"
+  AddCopyright: "&aCopyright added"
+  DeleteCopyright: "&aCopyright deleted"
+  CopyrightAlreadyExists: "&cMap already copyrighted"
+  MapNotCopyrighted: "&eThis map is not copyrighted"
+  NotOwner: "&cYou are not the copyright owner"
+  GiveTrust: "&a{ign} has been given trust"
+  TakeTrust: "&a{ign} is no longer trusted"
+  GiveOwner: "&aCopyright ownership given to {ign}"
+  GivePublicTrust: "&aPublic trust added"
+  TakePublicTrust: "&aPublic trust removed"
+  Info:
+    MapID: "&bCopyright Info for Map ID {mapid}"
+    Owner: "&bOwner: {ign}"
+    TrustList: "&bTrusted: {trustlist}"
+    Public: "&bPublic: {public}"
+  Area:
+    NoPerms: "&cYou do not have permission to make a map in this area"
+    NotClaimed: "&eArea not Claimed"
+    AlreadyClaimed: "&cArea already claimed"
+    AddClaim: "&aArea successfully claimed"
+    DeleteClaim: "&aArea successfully unclaimed"
+    NotOwner: "&cYou are not the area owner"
+    GiveTrust: "&a{ign} trusted to make maps in area"
+    TakeTrust: "&a{ign} no longer trusted to make maps in area"
+    GivePublicTrust: "&aPublic trusted to make maps in area"
+    TakePublicTrust: "&aPublic no longer trusted to make maps in area"
+    AreaBroken: "&cArea claim info corrupted, area info deleted, please reclaim area"
+    Info:
+      Owner: "&bOwner: {ign}"
+      TrustList: "&bTrusted: {trustlist}"
+      Public: "&bPublic: {public}"
