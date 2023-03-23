@@ -42,6 +42,9 @@ public class MapCreationListener implements Listener {
         chunkx = chunkx - (chunkx % (16*8)) + 64;
         chunkz = chunkz - (chunkz % (16*8)) + 64;
 
+        chunkx = chunkx/16;
+        chunkz = chunkz/16;
+
         //Get the persistent data container for that chunk
         PersistentDataContainer container = play.getWorld().getChunkAt(chunkx, chunkz).getPersistentDataContainer();
 
