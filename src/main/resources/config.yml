@@ -1,4 +1,6 @@
-#This is the config file
+#Data store options 
+# if both are false, copyrights will not persist past restart
+# if both are true, copyrights will be synced between them at plugin startup
 useFlatFileStorage: true
 useSQL: false
 MySQL: # For copyright storage
