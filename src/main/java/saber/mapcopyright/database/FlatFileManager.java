@@ -8,6 +8,7 @@ import saber.mapcopyright.utils.Copyright;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -168,7 +169,9 @@ public class FlatFileManager {
 
         //Remove the given player
         trusted.remove(player.toString());
-        fcg.set(owner.toString(), trusted);
+
+        if (trusted.size() == 0) fcg.set(owner.toString(), null);
+        else fcg.set(owner.toString(), trusted);
 
         //Save the file
         saveFile(fcg, f.getAbsolutePath());
@@ -205,5 +208,17 @@ public class FlatFileManager {
         for (String x : files) result.add(Integer.parseInt(x.replace(".yml","")));
 
         return result;
+    }
+
+    protected List<UUID> getTrustAllOwners(){
+        //Get the trust all file
+        File f = getTrustAll();
+        FileConfiguration fcg = YamlConfiguration.loadConfiguration(f);
+
+        //Get the keys from the file and convert to UUID
+        List<UUID> owners = new ArrayList<>();
+        for (String x : fcg.getKeys(false)) owners.add(UUID.fromString(x));
+
+        return owners;
     }
 }

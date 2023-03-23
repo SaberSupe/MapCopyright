@@ -247,9 +247,33 @@ public class SQLManager {
             return result;
 
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.INFO, "SQL getTrustAll Failed");
+            plugin.getLogger().log(Level.INFO, "SQL getAllCopyrightIDS Failed");
             e.printStackTrace();
             return result;
+        }
+    }
+
+    protected List<UUID> getAllTrustAllOwners() {
+        List<UUID> owners = new ArrayList<>();
+        try(Connection connection = hikari.getConnection();
+            PreparedStatement pstmt = connection.prepareStatement("SELECT DISTINCT BIN_TO_UUID(OwnerUUID) FROM MapCopyrightTrustAll;")) {
+
+            //Retrieve all trust all owners from database
+            ResultSet rs = pstmt.executeQuery();
+
+            //Loop through converting uuid and adding to list
+            while(rs.next()){
+                owners.add(UUID.fromString(rs.getString(1)));
+            }
+
+            //Return the list
+            pstmt.close();
+            return owners;
+
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.INFO, "SQL GetTrustAllOwners Failed");
+            e.printStackTrace();
+            return owners;
         }
     }
 }

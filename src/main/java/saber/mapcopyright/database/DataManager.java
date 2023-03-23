@@ -47,30 +47,8 @@ public class DataManager {
 
         //If both data stores are selected compare number of copyrights and sync if not the same
         if (usesql && useflat){
-            List<Integer> flatcopyrights = flatfile.getAllCopyrightIDS();
-            List<Integer> databasecopyrights = database.getAllCopyrightIDS();
-
-            if (flatcopyrights.size() != databasecopyrights.size()){
-                plugin.getLogger().log(Level.INFO, "Database mismatch with flat file detected, syncing");
-
-                //Load all flat file copyrights into database if not already there
-                for (Integer x : flatcopyrights){
-                    if (!databasecopyrights.contains(x)){
-                        database.addCopyright(flatfile.getCopyright(x));
-                    }
-                }
-
-                //Load all database copyrights into flat file if not already there
-                for (Integer x : databasecopyrights){
-                    if (!flatcopyrights.contains(x)){
-                        flatfile.addCopyright(database.getCopyright(x));
-                    }
-                }
-
-                plugin.getLogger().log(Level.INFO, "Sync Complete");
-            }
+            syncDatastore();
         }
-
     }
 
     public Copyright getCopyright(int map_id){
@@ -279,5 +257,51 @@ public class DataManager {
                 if (useflat) flatfile.remTrustAll(owner,player);
             }
         });
+    }
+
+    private void syncDatastore() {
+        List<Integer> flatcopyrights = flatfile.getAllCopyrightIDS();
+        List<Integer> databasecopyrights = database.getAllCopyrightIDS();
+
+        //Check if the database has the same number of copyrights as the flat file
+        //This is a pretty shallow comparison check but will catch the majority of mismatch cases
+        if (flatcopyrights.size() != databasecopyrights.size()) {
+            plugin.getLogger().log(Level.INFO, "Database mismatch with flat file detected, syncing");
+
+            //Load all flat file copyrights into database if not already there
+            for (Integer x : flatcopyrights) {
+                if (!databasecopyrights.contains(x)) {
+                    database.addCopyright(flatfile.getCopyright(x));
+                }
+            }
+
+            //Load all database copyrights into flat file if not already there
+            for (Integer x : databasecopyrights) {
+                if (!flatcopyrights.contains(x)) {
+                    flatfile.addCopyright(database.getCopyright(x));
+                }
+            }
+
+            //Get all saved owners with a trust all list
+            List<UUID> flatfileTrustAll = flatfile.getTrustAllOwners();
+            List<UUID> databaseTrustAll = database.getAllTrustAllOwners();
+
+            //Loop through flat file list adding any that don't exist in the database to the database
+            for (UUID x : flatfileTrustAll){
+                if (!databaseTrustAll.contains(x)){
+                    for (UUID y : flatfile.getTrustAll(x)) database.addTrustAll(x,y);
+                }
+            }
+
+            //Loop through database list adding any that don't exist in the flat file to the flat file
+            for (UUID x : databaseTrustAll){
+                if (!flatfileTrustAll.contains(x)){
+                    for (UUID y : database.getTrustAll(x)) flatfile.addTrustAll(x,y);
+                }
+            }
+
+
+            plugin.getLogger().log(Level.INFO, "Sync Complete");
+        }
     }
 }
