@@ -8,9 +8,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapView;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import saber.mapcopyright.MapCopyright;
+import saber.mapcopyright.utils.Copyright;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +70,34 @@ public class MapCreationListener implements Listener {
 
         //Stop them from filling a map and inform them
         e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.NoPerms")));
+        e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onRightClickBanner(PlayerInteractEvent e){
+
+        //If they are right-clicking a banner with a filled map
+        if (!(e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getClickedBlock().getType().toString().contains("BANNER") && e.hasItem() && e.getItem().getType().equals(Material.FILLED_MAP))) return;
+
+        MapMeta mapMeta = (MapMeta) e.getItem().getItemMeta();
+        MapView mapView = mapMeta.getMapView();
+
+        //Check if map is locked
+        if (!mapView.isLocked()) return;
+
+        //Check for the copyright
+        int mapID = mapView.getId();
+        Copyright copyr = plugin.getDataManager().getCopyright(mapID);
+
+        if (copyr == null) return;
+
+        Player play = e.getPlayer();
+
+        //If they are owner, trusted or fully trusted by owner return
+        if (copyr.getOwner().equals(play.getUniqueId()) || copyr.getMembers().contains(play.getUniqueId()) || plugin.getDataManager().isTrustAll(copyr.getOwner(), play.getUniqueId())) return;
+
+        //Stop them from adding/removing banner
+        e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.NoBannerPerms")));
         e.setCancelled(true);
     }
 }

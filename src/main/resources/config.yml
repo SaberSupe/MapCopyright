@@ -14,6 +14,7 @@ MySQL: # For copyright storage
 msg:
   NoCommandPerms: "&cYou do not have permission to use this command"
   NoCopyPerms: "&aYou do not have permission to copy this map"
+  NoBannerPerms: "&cYou cannot modify banners on this map without trust"
   NotPlayer: "&cMust be a Player to use this command"
   InvalidSubCommand: "&cSubcommand not recognized"
   PlayerNotFound: "&cPlayer Not Found"
