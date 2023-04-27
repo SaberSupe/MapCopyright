@@ -13,12 +13,15 @@ import saber.mapcopyright.commands.subcommands.AreaCommands;
 import saber.mapcopyright.commands.subcommands.FullTrustCommands;
 import saber.mapcopyright.utils.Copyright;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class CopyrightCommand implements CommandExecutor {
 
     private final MapCopyright plugin;
     private final NamespacedKey key;
+    private final String[] SubCommands = {"area", "create", "delete", "fulltrust", "give", "help", "info", "togglepublic", "trust", "untrust"};
 
     public CopyrightCommand(MapCopyright p1){
 
@@ -43,8 +46,20 @@ public class CopyrightCommand implements CommandExecutor {
         }
 
         //Check that they entered a subcommand
-        if (args.length == 0) {
+        if (args.length == 0 || !Arrays.asList(SubCommands).contains(args[0].toLowerCase())) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.InvalidSubCommand")));
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("Help") || args[0].equalsIgnoreCase("?")){
+            int pageNumber = 1;
+            if (args.length > 1 && args[1].matches("-?\\d+")) pageNumber = Integer.parseInt(args[1]);
+            List<String> helpPage = plugin.getConfig().getStringList("msg.Help." + pageNumber);
+            if (helpPage.isEmpty()) {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.getConfig().getString("msg.Help.PageNotFound").replace("{pagenumber}", args[1])));
+                return true;
+            }
+            for (String x : helpPage) sender.sendMessage(ChatColor.translateAlternateColorCodes('&', x));
             return true;
         }
 

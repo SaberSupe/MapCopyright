@@ -1,10 +1,8 @@
 package saber.mapcopyright.utils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,15 +15,16 @@ public class TabComplete implements TabCompleter {
         if (args.length == 1){
 
             //If on the first args, add all possible first args to list
-            result.add("Create");
-            result.add("Delete");
-            result.add("FullTrust");
-            result.add("Trust");
-            result.add("Untrust");
-            result.add("Area");
-            result.add("TogglePublic");
-            result.add("Info");
-            result.add("Give");
+            result.add("create");
+            result.add("delete");
+            result.add("fulltrust");
+            result.add("trust");
+            result.add("untrust");
+            result.add("area");
+            result.add("togglepublic");
+            result.add("info");
+            result.add("give");
+            result.add("help");
 
             //Remove any that don't match what the user has already typed
             result.removeIf(x -> !x.toLowerCase().startsWith(args[0].toLowerCase()));
@@ -34,30 +33,30 @@ public class TabComplete implements TabCompleter {
             if (args[0].equalsIgnoreCase("area")){
 
                 //If on area, add all subcommands to list
-                result.add("Claim");
-                result.add("Unclaim");
-                result.add("Trust");
-                result.add("Untrust");
-                result.add("Info");
-                result.add("TogglePublic");
+                result.add("claim");
+                result.add("unclaim");
+                result.add("trust");
+                result.add("untrust");
+                result.add("info");
+                result.add("togglepublic");
 
                 //Remove any that don't match what the user has already typed
                 result.removeIf(x -> !x.toLowerCase().startsWith(args[1].toLowerCase()));
             }
 
             if (args[0].equalsIgnoreCase("fulltrust")){
-                result.add("Add");
-                result.add("Remove");
-                result.add("List");
-                result.add("TogglePublic");
+                result.add("add");
+                result.add("remove");
+                result.add("list");
+                result.add("togglepublic");
 
                 //Remove any that don't match what the user has already typed
                 result.removeIf(x -> !x.toLowerCase().startsWith(args[1].toLowerCase()));
             }
 
-            if (args[0].equalsIgnoreCase("Trust") ||
-                    args[0].equalsIgnoreCase("Untrust") ||
-                    args[0].equalsIgnoreCase("Give")){
+            if (args[0].equalsIgnoreCase("trust") ||
+                    args[0].equalsIgnoreCase("untrust") ||
+                    args[0].equalsIgnoreCase("give")){
 
                 //returning null to make the tab list the players list
                 return null;

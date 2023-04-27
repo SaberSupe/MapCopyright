@@ -97,5 +97,7 @@ public class FullTrustCommands {
             play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.GiveFullTrustPublic")));
             return;
         }
+
+        play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.InvalidSubCommand")));
     }
 }

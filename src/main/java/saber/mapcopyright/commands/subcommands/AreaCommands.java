@@ -19,6 +19,7 @@ public class AreaCommands {
 
         //If the player just enters /copyright area, do nothing
         if (args.length == 1){
+            play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.InvalidSubCommand")));
             return;
         }
 
@@ -373,5 +374,7 @@ public class AreaCommands {
             play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.GivePublicTrust")));
             return;
         }
+
+        play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.InvalidSubCommand")));
     }
 }
