@@ -15,11 +15,11 @@ import java.util.UUID;
 
 public class AreaCommands {
 
-    public static void areaCommand(Player play, NamespacedKey key, String[] args, boolean force, MapCopyright plugin){
+    public static void areaCommand(Player play, NamespacedKey key, String[] args, boolean force, MapCopyright instance){
 
         //If the player just enters /copyright area, do nothing
         if (args.length == 1){
-            play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.InvalidSubCommand")));
+            play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.InvalidSubCommand")));
             return;
         }
 
@@ -40,7 +40,7 @@ public class AreaCommands {
 
             //Check if the area is claimed
             if (!container.has(key,PersistentDataType.LONG_ARRAY)){
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.NotClaimed")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.NotClaimed")));
                 return;
             }
 
@@ -56,14 +56,14 @@ public class AreaCommands {
                 UUID temp = new UUID(trustlist[i],trustlist[i+1]);
 
                 //Check if the UUID denotes public trust
-                if (temp.equals(plugin.PublicTrust)) publictrust = true;
+                if (temp.equals(instance.PublicTrust)) publictrust = true;
 
                 //Add the Player to the list of trusted players
                 else players.add(Bukkit.getOfflinePlayer(temp).getName());
             }
 
             //The first player in the list denotes the owner, send message telling owner name
-            play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.Info.Owner")).replace("{ign}", players.get(0)));
+            play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.Info.Owner")).replace("{ign}", players.get(0)));
 
             //Convert list of names into comma separated string
             String trusted = "";
@@ -73,8 +73,8 @@ public class AreaCommands {
             }
 
             //Send the string of trusted players as well as true/false for public trust
-            play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.Info.TrustList")).replace("{trustlist}", trusted));
-            play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.Info.Public")).replace("{public}", String.valueOf(publictrust)));
+            play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.Info.TrustList")).replace("{trustlist}", trusted));
+            play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.Info.Public")).replace("{public}", String.valueOf(publictrust)));
             return;
         }
 
@@ -82,7 +82,7 @@ public class AreaCommands {
 
             //Check if area is claimed
             if (container.has(key, PersistentDataType.LONG_ARRAY)){
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.AlreadyClaimed")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.AlreadyClaimed")));
                 return;
             }
 
@@ -96,14 +96,14 @@ public class AreaCommands {
             container.set(key, PersistentDataType.LONG_ARRAY, trusted);
 
             //Inform the player
-            play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.AddClaim")));
+            play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.AddClaim")));
             return;
         }
         if (args[1].equalsIgnoreCase("unclaim")){
 
             //Check if the area is claimed
             if (!container.has(key,PersistentDataType.LONG_ARRAY)){
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.NotClaimed")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.NotClaimed")));
                 return;
             }
 
@@ -113,7 +113,7 @@ public class AreaCommands {
             //This should never be true as it indicates an invalid trust list, if it does happen, the chunk will just be unclaimed
             if (trusted.length<2){
                 container.remove(key);
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.AreaBroken")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.AreaBroken")));
                 return;
             }
 
@@ -123,13 +123,13 @@ public class AreaCommands {
             //Check if the player issuing the command is the owner or using force
             if (!owner.equals(play.getUniqueId()) && !force){
                 //If not owner, tell them
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.NotOwner")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.NotOwner")));
                 return;
             }
 
             //Delete the trustlist from the area and inform the player
             container.remove(key);
-            play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.DeleteClaim")));
+            play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.DeleteClaim")));
             return;
 
         }
@@ -137,7 +137,7 @@ public class AreaCommands {
 
             //Check if the area is claimed
             if (!container.has(key,PersistentDataType.LONG_ARRAY)){
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.NotClaimed")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.NotClaimed")));
                 return;
             }
 
@@ -147,27 +147,27 @@ public class AreaCommands {
             //This should never be true as it indicates an invalid trust list, if it does happen, the chunk will just be unclaimed
             if (trusted.length<2){
                 container.remove(key);
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.AreaBroken")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.AreaBroken")));
                 return;
             }
 
             //Get the owner and check if the issuing player is them or using force
             UUID owner = new UUID(trusted[0],trusted[1]);
             if (!owner.equals(play.getUniqueId()) && !force){
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.NotOwner")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.NotOwner")));
                 return;
             }
 
             //Check if the player entered an ign
             if (args.length < 3){
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.PlayerNotFound")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.PlayerNotFound")));
                 return;
             }
 
             //Get the entered player and inform the command issuer if not found
             Player member = Bukkit.getPlayer(args[2]);
             if (member == null){
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.PlayerNotFound")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.PlayerNotFound")));
                 return;
             }
 
@@ -183,13 +183,13 @@ public class AreaCommands {
 
             //Save the new trust list and inform of success
             container.set(key,PersistentDataType.LONG_ARRAY,newtrusted);
-            play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.GiveTrust")).replace("{ign}", member.getName()));
+            play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.GiveTrust")).replace("{ign}", member.getName()));
             return;
         }
         if (args[1].equalsIgnoreCase("untrust")){
             //Check if the area is claimed
             if (!container.has(key,PersistentDataType.LONG_ARRAY)){
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.NotClaimed")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.NotClaimed")));
                 return;
             }
 
@@ -199,20 +199,20 @@ public class AreaCommands {
             //This should never be true as it indicates an invalid trust list, if it does happen, the chunk will just be unclaimed
             if (trusted.length<2){
                 container.remove(key);
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.AreaBroken")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.AreaBroken")));
                 return;
             }
 
             //Get the owner and check if the issuer is them or using force
             UUID owner = new UUID(trusted[0],trusted[1]);
             if (!owner.equals(play.getUniqueId()) && !force){
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.NotOwner")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.NotOwner")));
                 return;
             }
 
             //Check if they entered an ign
             if (args.length < 3){
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.PlayerNotFound")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.PlayerNotFound")));
                 return;
             }
 
@@ -231,7 +231,7 @@ public class AreaCommands {
 
             //If not found inform the command issuer
             if (member == null){
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.PlayerNotFound")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.PlayerNotFound")));
                 return;
             }
 
@@ -241,7 +241,7 @@ public class AreaCommands {
             //This should never be true as it indicates an invalid trust list, if it does happen, the chunk will just be unclaimed
             if (trusted.length % 2 != 0){
                 container.remove(key);
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.AreaBroken")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.AreaBroken")));
                 return;
             }
 
@@ -260,7 +260,7 @@ public class AreaCommands {
                 if (!temp.equals(member.getUniqueId())){
                     //If we reached the end of the new list, then the intended player wasn't trusted in the first place, report success
                     if (index == newtrusted.length){
-                        play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.TakeTrust")).replace("{ign}", member.getName()));
+                        play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.TakeTrust")).replace("{ign}", member.getName()));
                         return;
                     }
 
@@ -273,7 +273,7 @@ public class AreaCommands {
 
             //Save the new list and report success
             container.set(key,PersistentDataType.LONG_ARRAY,newtrusted);
-            play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.TakeTrust")).replace("{ign}", member.getName()));
+            play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.TakeTrust")).replace("{ign}", member.getName()));
             return;
         }
 
@@ -281,7 +281,7 @@ public class AreaCommands {
 
             //Check if the area is claimed
             if (!container.has(key,PersistentDataType.LONG_ARRAY)){
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.NotClaimed")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.NotClaimed")));
                 return;
             }
 
@@ -291,14 +291,14 @@ public class AreaCommands {
             //This should never be true as it indicates an invalid trust list, if it does happen, the chunk will just be unclaimed
             if (trusted.length<2){
                 container.remove(key);
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.AreaBroken")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.AreaBroken")));
                 return;
             }
 
             //Get the owner and check if the command issuer is them or using force
             UUID owner = new UUID(trusted[0],trusted[1]);
             if (!owner.equals(play.getUniqueId()) && !force){
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.NotOwner")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.NotOwner")));
                 return;
             }
 
@@ -311,7 +311,7 @@ public class AreaCommands {
                     //Rebuild UUID from longs
                     UUID temp = new UUID(trusted[i],trusted[i+1]);
                     //Check if it is the UUID representing public trust
-                    publictrust = plugin.PublicTrust.equals(temp);
+                    publictrust = instance.PublicTrust.equals(temp);
                 }
             }
             if (publictrust){ //If the public is trusted remove it
@@ -322,7 +322,7 @@ public class AreaCommands {
                 //This should never be true as it indicates an invalid trust list, if it does happen, the chunk will just be unclaimed
                 if (trusted.length % 2 != 0){
                     container.remove(key);
-                    play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.AreaBroken")));
+                    play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.AreaBroken")));
                     return;
                 }
 
@@ -338,7 +338,7 @@ public class AreaCommands {
                     UUID temp = new UUID(trusted[i],trusted[i+1]);
 
                     //Check if public trust
-                    if (!temp.equals(plugin.PublicTrust)){
+                    if (!temp.equals(instance.PublicTrust)){
 
                         //This should never be true but left to avoid index out of bounds errors if data is corrupted
                         if (index == newtrusted.length){
@@ -354,7 +354,7 @@ public class AreaCommands {
 
                 //Save the new list and inform of success
                 container.set(key,PersistentDataType.LONG_ARRAY,newtrusted);
-                play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.TakePublicTrust")));
+                play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.TakePublicTrust")));
                 return;
             }
 
@@ -366,15 +366,15 @@ public class AreaCommands {
             for (int i = 0; i < trusted.length; i++) newtrusted[i] = trusted[i];
 
             //Add the UUID representing public trust
-            newtrusted[newtrusted.length-2] = plugin.PublicTrust.getMostSignificantBits();
-            newtrusted[newtrusted.length-1] = plugin.PublicTrust.getLeastSignificantBits();
+            newtrusted[newtrusted.length-2] = instance.PublicTrust.getMostSignificantBits();
+            newtrusted[newtrusted.length-1] = instance.PublicTrust.getLeastSignificantBits();
 
             //Save the new list
             container.set(key,PersistentDataType.LONG_ARRAY,newtrusted);
-            play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.GivePublicTrust")));
+            play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.GivePublicTrust")));
             return;
         }
 
-        play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.InvalidSubCommand")));
+        play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.InvalidSubCommand")));
     }
 }

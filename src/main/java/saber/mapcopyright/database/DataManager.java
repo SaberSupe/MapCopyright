@@ -1,7 +1,5 @@
 package saber.mapcopyright.database;
 
-import org.bukkit.Bukkit;
-import org.checkerframework.checker.units.qual.A;
 import saber.mapcopyright.MapCopyright;
 import saber.mapcopyright.utils.Copyright;
 
@@ -13,36 +11,36 @@ import java.util.logging.Level;
 
 public class DataManager {
 
-    private final MapCopyright plugin;
+    private final MapCopyright instance;
     private List<Copyright> Rights = new ArrayList<>();
     private boolean usesql;
-    private boolean useflat;
+    private final boolean useflat;
     private SQLManager database = null;
     private FlatFileManager flatfile = null;
-    private HashMap<UUID,List<UUID>> trustall = new HashMap<>();
+    private final HashMap<UUID,List<UUID>> trustall = new HashMap<>();
 
-    public DataManager(MapCopyright p1){
-        plugin = p1;
-        usesql = plugin.getConfig().getBoolean("useSQL");
-        useflat = plugin.getConfig().getBoolean("useFlatFileStorage");
+    public DataManager(MapCopyright instance){
+        this.instance = instance;
+        usesql = this.instance.getConfig().getBoolean("useSQL");
+        useflat = this.instance.getConfig().getBoolean("useFlatFileStorage");
 
         if (usesql){
             //Initialize Database
-            database = new SQLManager(plugin);
+            database = new SQLManager(this.instance);
             usesql = database.createTables();
 
             //If the database connection failed
             if (!usesql){
-                plugin.getLogger().log(Level.INFO, "Database connection failed");
+                this.instance.getLogger().log(Level.INFO, "Database connection failed");
             }
         }
 
         //Initialize flat file
-        if (useflat) flatfile = new FlatFileManager(plugin);
+        if (useflat) flatfile = new FlatFileManager(this.instance);
 
         //Warn if no data store is available
         if (!(useflat || usesql)){
-            plugin.getLogger().log(Level.INFO, "No usable datastore set in config, copyrights will not persist past restart");
+            this.instance.getLogger().log(Level.INFO, "No usable datastore set in config, copyrights will not persist past restart");
         }
 
         //If both data stores are selected compare number of copyrights and sync if not the same
@@ -90,7 +88,7 @@ public class DataManager {
         Rights.add(copyr);
 
         //Store copyright in the data stores Asynchronously
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+        instance.getServer().getScheduler().runTaskAsynchronously(instance, new Runnable() {
             @Override
             public void run() {
                 if (usesql) database.addCopyright(copyr);
@@ -109,7 +107,7 @@ public class DataManager {
 
         //Delete from cache and data stores
         Rights.remove(copyr);
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+        instance.getServer().getScheduler().runTaskAsynchronously(instance, new Runnable() {
             @Override
             public void run() {
                 if (usesql) database.remCopyright(copyr);
@@ -127,7 +125,7 @@ public class DataManager {
 
             //Add the member to the cache and data store
             copyr.addMember(member);
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            instance.getServer().getScheduler().runTaskAsynchronously(instance, new Runnable() {
                 @Override
                 public void run() {
                     if (usesql) database.addMember(mapid, member);
@@ -146,7 +144,7 @@ public class DataManager {
 
             //Remove the member from the cache and data store
             copyr.remMember(member);
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            instance.getServer().getScheduler().runTaskAsynchronously(instance, new Runnable() {
                 @Override
                 public void run() {
                     if (usesql) database.remMember(mapid, member);
@@ -164,7 +162,7 @@ public class DataManager {
 
             //Set the new owner in cache and data store
             copyr.setOwner(newOwner);
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            instance.getServer().getScheduler().runTaskAsynchronously(instance, new Runnable() {
                 @Override
                 public void run() {
                     if (usesql) database.giveOwner(mapid,newOwner);
@@ -230,7 +228,7 @@ public class DataManager {
 
 
         //Store the list in the data store
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+        instance.getServer().getScheduler().runTaskAsynchronously(instance, new Runnable() {
             @Override
             public void run() {
                 if (usesql) database.addTrustAll(owner, player);
@@ -250,7 +248,7 @@ public class DataManager {
         trustall.put(owner,trusted);
 
         //Update the data store
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+        instance.getServer().getScheduler().runTaskAsynchronously(instance, new Runnable() {
             @Override
             public void run() {
                 if (usesql) database.remTrustAll(owner,player);
@@ -266,7 +264,7 @@ public class DataManager {
         //Check if the database has the same number of copyrights as the flat file
         //This is a pretty shallow comparison check but will catch the majority of mismatch cases
         if (flatcopyrights.size() != databasecopyrights.size()) {
-            plugin.getLogger().log(Level.INFO, "Database mismatch with flat file detected, syncing");
+            instance.getLogger().log(Level.INFO, "Database mismatch with flat file detected, syncing");
 
             //Load all flat file copyrights into database if not already there
             for (Integer x : flatcopyrights) {
@@ -301,7 +299,7 @@ public class DataManager {
             }
 
 
-            plugin.getLogger().log(Level.INFO, "Sync Complete");
+            instance.getLogger().log(Level.INFO, "Sync Complete");
         }
     }
 }

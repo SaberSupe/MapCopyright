@@ -1,4 +1,4 @@
-package saber.mapcopyright.events;
+package saber.mapcopyright.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,11 +21,11 @@ import java.util.UUID;
 
 public class MapCreationListener implements Listener {
 
-    private final MapCopyright plugin;
+    private final MapCopyright instance;
     private final NamespacedKey key;
-    public MapCreationListener(MapCopyright p1){
-        plugin = p1;
-        key = new NamespacedKey(plugin, "copyright");
+    public MapCreationListener(MapCopyright instance){
+        this.instance = instance;
+        key = new NamespacedKey(instance, "copyright");
     }
 
     @EventHandler
@@ -63,13 +63,13 @@ public class MapCreationListener implements Listener {
         for (int i = 0; i < trusted.length-1; i+=2) members.add(new UUID(trusted[i],trusted[i+1]));
 
         //If the player is the owner, trusted or Fully trusted by the owner return
-        if (trusted.length == 0 || members.contains(e.getPlayer().getUniqueId()) || plugin.getDataManager().isTrustAll(members.get(0),e.getPlayer().getUniqueId())) return;
+        if (trusted.length == 0 || members.contains(e.getPlayer().getUniqueId()) || instance.getDataManager().isTrustAll(members.get(0),e.getPlayer().getUniqueId())) return;
 
         //If the area is public
-        if (members.contains(plugin.PublicTrust) || plugin.getDataManager().isTrustAll(members.get(0),plugin.PublicTrust)) return;
+        if (members.contains(instance.PublicTrust) || instance.getDataManager().isTrustAll(members.get(0), instance.PublicTrust)) return;
 
         //Stop them from filling a map and inform them
-        e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Area.NoPerms")));
+        e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Area.NoPerms")));
         e.setCancelled(true);
     }
 
@@ -87,17 +87,17 @@ public class MapCreationListener implements Listener {
 
         //Check for the copyright
         int mapID = mapView.getId();
-        Copyright copyr = plugin.getDataManager().getCopyright(mapID);
+        Copyright copyr = instance.getDataManager().getCopyright(mapID);
 
         if (copyr == null) return;
 
         Player play = e.getPlayer();
 
         //If they are owner, trusted or fully trusted by owner return
-        if (copyr.getOwner().equals(play.getUniqueId()) || copyr.getMembers().contains(play.getUniqueId()) || plugin.getDataManager().isTrustAll(copyr.getOwner(), play.getUniqueId())) return;
+        if (copyr.getOwner().equals(play.getUniqueId()) || copyr.getMembers().contains(play.getUniqueId()) || instance.getDataManager().isTrustAll(copyr.getOwner(), play.getUniqueId())) return;
 
         //Stop them from adding/removing banner
-        e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.NoBannerPerms")));
+        e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.NoBannerPerms")));
         e.setCancelled(true);
     }
 }

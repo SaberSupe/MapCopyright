@@ -1,4 +1,4 @@
-package saber.mapcopyright.events;
+package saber.mapcopyright.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -16,10 +16,10 @@ import saber.mapcopyright.utils.Copyright;
 public class ItemCraftListener implements Listener {
 
 
-    private final MapCopyright plugin;
+    private final MapCopyright instance;
 
-    public ItemCraftListener(MapCopyright p1) {
-        plugin = p1;
+    public ItemCraftListener(MapCopyright instance) {
+        this.instance = instance;
     }
 
     @EventHandler
@@ -38,7 +38,7 @@ public class ItemCraftListener implements Listener {
         int mapid = mapview.getId();
 
         //Get the associated map copyright
-        Copyright copyr = plugin.getDataManager().getCopyright(mapid);
+        Copyright copyr = instance.getDataManager().getCopyright(mapid);
 
         //If not copyrighted return
         if (copyr == null) return;
@@ -46,14 +46,14 @@ public class ItemCraftListener implements Listener {
         Player play = (Player) e.getWhoClicked();
 
         //If the player is the owner, trusted or fully trusted by owner return
-        if (copyr.getOwner() == play.getUniqueId() || copyr.getMembers().contains(play.getUniqueId()) || plugin.getDataManager().isTrustAll(copyr.getOwner(), play.getUniqueId())) return;
+        if (copyr.getOwner() == play.getUniqueId() || copyr.getMembers().contains(play.getUniqueId()) || instance.getDataManager().isTrustAll(copyr.getOwner(), play.getUniqueId())) return;
 
         //If the map has public trust return
-        if (copyr.getMembers().contains(plugin.PublicTrust) || plugin.getDataManager().isTrustAll(copyr.getOwner(),plugin.PublicTrust)) return;
+        if (copyr.getMembers().contains(instance.PublicTrust) || instance.getDataManager().isTrustAll(copyr.getOwner(),instance.PublicTrust)) return;
 
         //Stop the player from copying the map and tell them
         e.setCancelled(true);
-        play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.NoCopyPerms")));
+        play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.NoCopyPerms")));
     }
 
     @EventHandler
@@ -80,25 +80,25 @@ public class ItemCraftListener implements Listener {
         int mapid = mapview.getId();
 
         //Get the copyright associated with the map
-        Copyright copyr = plugin.getDataManager().getCopyright(mapid);
+        Copyright copyr = instance.getDataManager().getCopyright(mapid);
 
         Player play = (Player) e.getWhoClicked();
 
         //If the copyright doesn't exist return
         if (copyr == null){
             //if they are locking a map, make a copyright
-            if (e.getClickedInventory().getItem(1).getType() == Material.GLASS_PANE) plugin.getDataManager().addCopyright(plugin.getCurMapID(), e.getWhoClicked().getUniqueId());
+            if (e.getClickedInventory().getItem(1).getType() == Material.GLASS_PANE) instance.getDataManager().addCopyright(instance.getCurMapID(), e.getWhoClicked().getUniqueId());
             return;
         }
 
         //If they are owner, trusted or fully trusted by owner return
-        if (copyr.getOwner().equals(play.getUniqueId()) || copyr.getMembers().contains(play.getUniqueId()) || plugin.getDataManager().isTrustAll(copyr.getOwner(), play.getUniqueId())) return;
+        if (copyr.getOwner().equals(play.getUniqueId()) || copyr.getMembers().contains(play.getUniqueId()) || instance.getDataManager().isTrustAll(copyr.getOwner(), play.getUniqueId())) return;
 
         //If the map is public return
-        if (copyr.getMembers().contains(plugin.PublicTrust) || plugin.getDataManager().isTrustAll(copyr.getOwner(),plugin.PublicTrust)) return;
+        if (copyr.getMembers().contains(instance.PublicTrust) || instance.getDataManager().isTrustAll(copyr.getOwner(),instance.PublicTrust)) return;
 
         //Stop them from copying the map and tell them
         e.setCancelled(true);
-        play.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.NoCopyPerms")));
+        play.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.NoCopyPerms")));
     }
 }

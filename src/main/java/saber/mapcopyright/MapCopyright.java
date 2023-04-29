@@ -4,8 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import saber.mapcopyright.commands.CopyrightCommand;
 import saber.mapcopyright.database.DataManager;
-import saber.mapcopyright.events.ItemCraftListener;
-import saber.mapcopyright.events.MapCreationListener;
+import saber.mapcopyright.listeners.ItemCraftListener;
+import saber.mapcopyright.listeners.MapCreationListener;
 import saber.mapcopyright.utils.TabComplete;
 
 import java.util.UUID;

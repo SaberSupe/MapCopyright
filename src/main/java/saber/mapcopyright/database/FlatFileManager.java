@@ -8,17 +8,14 @@ import saber.mapcopyright.utils.Copyright;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 public class FlatFileManager {
 
-    private final MapCopyright plugin;
-    protected FlatFileManager(MapCopyright p1){
-
-        plugin = p1;
-
+    private final MapCopyright instance;
+    protected FlatFileManager(MapCopyright instance){
+        this.instance = instance;
     }
 
 
@@ -64,7 +61,7 @@ public class FlatFileManager {
 
         //If it doesn't exist, create it, this will include the new member so no need to continue
         if (!f.exists()) {
-            addCopyright(plugin.getDataManager().getCopyright(mapid));
+            addCopyright(instance.getDataManager().getCopyright(mapid));
             return;
         }
 
@@ -86,7 +83,7 @@ public class FlatFileManager {
 
         //If it doesn't exist, create it, this will include the member removal so no need to continue
         if (!f.exists()) {
-            addCopyright(plugin.getDataManager().getCopyright(mapid));
+            addCopyright(instance.getDataManager().getCopyright(mapid));
             return;
         }
 
@@ -116,7 +113,7 @@ public class FlatFileManager {
 
         //If it doesn't exist, create it, this will include the owner change so no need to continue
         if (!f.exists()) {
-            addCopyright(plugin.getDataManager().getCopyright(mapid));
+            addCopyright(instance.getDataManager().getCopyright(mapid));
             return;
         }
 
@@ -179,11 +176,11 @@ public class FlatFileManager {
 
     private File getFile(int map_id){
         //Return the file path for the given mapid, having a central command makes it easier to change if needed
-        return new File(plugin.getDataFolder().getAbsolutePath()+ "/maps/" + map_id + ".yml");
+        return new File(instance.getDataFolder().getAbsolutePath()+ "/maps/" + map_id + ".yml");
     }
     private File getTrustAll(){
         //Return the file path for the trustall file, having a central command makes it easier to change if needed
-        return new File(plugin.getDataFolder().getAbsolutePath() + "/trustall.yml");
+        return new File(instance.getDataFolder().getAbsolutePath() + "/trustall.yml");
     }
 
     private void saveFile(FileConfiguration fcg, String path){
@@ -200,7 +197,7 @@ public class FlatFileManager {
 
         //Get a list of all mapids by getting all files in maps folder
         List<Integer> result = new ArrayList<>();
-        File dir = new File(plugin.getDataFolder().getAbsolutePath() + "/maps");
+        File dir = new File(instance.getDataFolder().getAbsolutePath() + "/maps");
         if (!dir.exists()) return result;
 
         //remove .yml and convert the ids to integers

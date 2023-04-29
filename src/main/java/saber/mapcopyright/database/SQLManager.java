@@ -13,12 +13,12 @@ import java.util.logging.Level;
 
 public class SQLManager {
 
-    private final MapCopyright plugin;
-    private HikariDataSource hikari;
+    private final MapCopyright instance;
+    private final HikariDataSource hikari;
 
-    protected SQLManager(MapCopyright p1){
-        plugin = p1;
-        FileConfiguration conf = plugin.getConfig();
+    protected SQLManager(MapCopyright instance){
+        this.instance = instance;
+        FileConfiguration conf = instance.getConfig();
 
         //Set up the database connection
         hikari = new HikariDataSource();
@@ -72,7 +72,7 @@ public class SQLManager {
             return new Copyright(map_id,owner,trusted);
 
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.INFO, "SQL getCopyright Failed");
+            instance.getLogger().log(Level.INFO, "SQL getCopyright Failed");
             e.printStackTrace();
             return null;
         }
@@ -99,7 +99,7 @@ public class SQLManager {
 
 
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.INFO, "SQL addCopyright Failed");
+            instance.getLogger().log(Level.INFO, "SQL addCopyright Failed");
             e.printStackTrace();
         }
     }
@@ -115,7 +115,7 @@ public class SQLManager {
             pstmt.close();
 
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.INFO, "SQL addMember Failed");
+            instance.getLogger().log(Level.INFO, "SQL addMember Failed");
             e.printStackTrace();
         }
     }
@@ -131,7 +131,7 @@ public class SQLManager {
             pstmt.close();
 
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.INFO, "SQL remMember Failed");
+            instance.getLogger().log(Level.INFO, "SQL remMember Failed");
             e.printStackTrace();
         }
     }
@@ -152,7 +152,7 @@ public class SQLManager {
             prep.close();
 
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.INFO, "SQL remCopyright Failed");
+            instance.getLogger().log(Level.INFO, "SQL remCopyright Failed");
             e.printStackTrace();
         }
     }
@@ -167,7 +167,7 @@ public class SQLManager {
             pstmt.close();
 
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.INFO, "SQL giveOwner Failed");
+            instance.getLogger().log(Level.INFO, "SQL giveOwner Failed");
             e.printStackTrace();
         }
     }
@@ -191,7 +191,7 @@ public class SQLManager {
             return trusted;
 
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.INFO, "SQL getTrustAll Failed");
+            instance.getLogger().log(Level.INFO, "SQL getTrustAll Failed");
             e.printStackTrace();
             return null;
         }
@@ -208,7 +208,7 @@ public class SQLManager {
             pstmt.close();
 
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.INFO, "SQL remTrustAll Failed");
+            instance.getLogger().log(Level.INFO, "SQL remTrustAll Failed");
             e.printStackTrace();
         }
     }
@@ -224,7 +224,7 @@ public class SQLManager {
             pstmt.close();
 
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.INFO, "SQL addTrustAll Failed");
+            instance.getLogger().log(Level.INFO, "SQL addTrustAll Failed");
             e.printStackTrace();
         }
     }
@@ -247,7 +247,7 @@ public class SQLManager {
             return result;
 
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.INFO, "SQL getAllCopyrightIDS Failed");
+            instance.getLogger().log(Level.INFO, "SQL getAllCopyrightIDS Failed");
             e.printStackTrace();
             return result;
         }
@@ -271,7 +271,7 @@ public class SQLManager {
             return owners;
 
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.INFO, "SQL GetTrustAllOwners Failed");
+            instance.getLogger().log(Level.INFO, "SQL GetTrustAllOwners Failed");
             e.printStackTrace();
             return owners;
         }

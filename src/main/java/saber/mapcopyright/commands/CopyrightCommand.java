@@ -19,14 +19,13 @@ import java.util.UUID;
 
 public class CopyrightCommand implements CommandExecutor {
 
-    private final MapCopyright plugin;
+    private final MapCopyright instance;
     private final NamespacedKey key;
     private final String[] SubCommands = {"area", "create", "delete", "fulltrust", "give", "help", "info", "togglepublic", "trust", "untrust"};
 
-    public CopyrightCommand(MapCopyright p1){
-
-        plugin = p1;
-        key = new NamespacedKey(plugin, "copyright");
+    public CopyrightCommand(MapCopyright instance){
+        this.instance = instance;
+        key = new NamespacedKey(this.instance, "copyright");
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
@@ -35,28 +34,28 @@ public class CopyrightCommand implements CommandExecutor {
 
         //Check Perms
         if (!sender.hasPermission("mapcopyright.copyright")){
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.NoCommandPerms")));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.NoCommandPerms")));
             return true;
         }
 
         //Check if player
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.NotPlayer")));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.NotPlayer")));
             return true;
         }
 
         //Check that they entered a subcommand
         if (args.length == 0 || !Arrays.asList(SubCommands).contains(args[0].toLowerCase())) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.InvalidSubCommand")));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.InvalidSubCommand")));
             return true;
         }
 
         if (args[0].equalsIgnoreCase("Help") || args[0].equalsIgnoreCase("?")){
             int pageNumber = 1;
             if (args.length > 1 && args[1].matches("-?\\d+")) pageNumber = Integer.parseInt(args[1]);
-            List<String> helpPage = plugin.getConfig().getStringList("msg.Help." + pageNumber);
+            List<String> helpPage = instance.getConfig().getStringList("msg.Help." + pageNumber);
             if (helpPage.isEmpty()) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.getConfig().getString("msg.Help.PageNotFound").replace("{pagenumber}", args[1])));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Help.PageNotFound").replace("{pagenumber}", args[1])));
                 return true;
             }
             for (String x : helpPage) sender.sendMessage(ChatColor.translateAlternateColorCodes('&', x));
@@ -70,14 +69,14 @@ public class CopyrightCommand implements CommandExecutor {
 
         if (args[0].equalsIgnoreCase("FullTrust")){
             //Process area command
-            FullTrustCommands.fullTrustCommand(play,args,plugin);
+            FullTrustCommands.fullTrustCommand(play,args, instance);
             return true;
         }
 
 
         if (args[0].equalsIgnoreCase("Area")){
             //Process area command
-            AreaCommands.areaCommand(play,key,args,force,plugin);
+            AreaCommands.areaCommand(play,key,args,force, instance);
             return true;
         }
 
@@ -86,7 +85,7 @@ public class CopyrightCommand implements CommandExecutor {
 
         //Check if it is a filled map
         if (itemmap.getType() != Material.FILLED_MAP){
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.HoldingLockedMap")));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.HoldingLockedMap")));
             return true;
         }
 
@@ -96,7 +95,7 @@ public class CopyrightCommand implements CommandExecutor {
 
         //Check if the map is locked
         if (!mapview.isLocked()){
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.HoldingLockedMap")));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.HoldingLockedMap")));
             return true;
         }
 
@@ -105,38 +104,38 @@ public class CopyrightCommand implements CommandExecutor {
         if (args[0].equalsIgnoreCase("create")) {
 
             //Attempt to add the copyright, will return false if it already exists
-            if (plugin.getDataManager().addCopyright(mapid,play.getUniqueId())){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.AddCopyright")));
+            if (instance.getDataManager().addCopyright(mapid,play.getUniqueId())){
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.AddCopyright")));
             } else {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.CopyrightAlreadyExists")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.CopyrightAlreadyExists")));
             }
             return true;
         }
 
         //Get the copyright associated with the map and check if it exists
-        Copyright copyr = plugin.getDataManager().getCopyright(mapid);
+        Copyright copyr = instance.getDataManager().getCopyright(mapid);
         if (copyr == null){
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.MapNotCopyrighted")));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.MapNotCopyrighted")));
             return true;
         }
 
         if (args[0].equalsIgnoreCase("info")) {
             //Send messages showing the info from the copyright
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Info.MapID")).replace("{mapid}", String.valueOf(mapid)));
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Info.Owner")).replace("{ign}", Bukkit.getOfflinePlayer(copyr.getOwner()).getName()));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Info.MapID")).replace("{mapid}", String.valueOf(mapid)));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Info.Owner")).replace("{ign}", Bukkit.getOfflinePlayer(copyr.getOwner()).getName()));
 
             //Loop through trusted members making comma seperated list and checking for public UUID
             String members = "";
             boolean publictrust = false;
             for (UUID x : copyr.getMembers()){
-                if (plugin.PublicTrust.equals(x)) publictrust = true;
+                if (instance.PublicTrust.equals(x)) publictrust = true;
                 else members = members + ", " + Bukkit.getOfflinePlayer(x).getName();
             }
 
             //Remove leading comma and send results to player
             members = members.replaceFirst(", ","");
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Info.TrustList")).replace("{trustlist}", members));
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.Info.Public")).replace("{public}", String.valueOf(publictrust)));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Info.TrustList")).replace("{trustlist}", members));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.Info.Public")).replace("{public}", String.valueOf(publictrust)));
             return true;
         }
 
@@ -144,26 +143,26 @@ public class CopyrightCommand implements CommandExecutor {
 
             //Check if they are the copyright owner or using force
             if (!copyr.getOwner().equals(play.getUniqueId()) && !force){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.NotOwner")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.NotOwner")));
                 return true;
             }
 
             //Check if they entered an ign
             if (args.length == 1) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.PlayerNotFound")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.PlayerNotFound")));
                 return true;
             }
 
             //Check if the entered ign can be found
             Player member = Bukkit.getPlayer(args[1]);
             if (member == null){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.PlayerNotFound")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.PlayerNotFound")));
                 return true;
             }
 
             //Add the player to the trust list and inform the command issuer
-            plugin.getDataManager().addMember(mapid,member.getUniqueId());
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.GiveTrust")).replace("{ign}", member.getName()));
+            instance.getDataManager().addMember(mapid,member.getUniqueId());
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.GiveTrust")).replace("{ign}", member.getName()));
             return true;
         }
 
@@ -171,13 +170,13 @@ public class CopyrightCommand implements CommandExecutor {
 
             //Check if they are the copyright owner or using force
             if (!copyr.getOwner().equals(play.getUniqueId()) && !force){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.NotOwner")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.NotOwner")));
                 return true;
             }
 
             //Check if they entered an ign
             if (args.length == 1) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.PlayerNotFound")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.PlayerNotFound")));
                 return true;
             }
 
@@ -197,13 +196,13 @@ public class CopyrightCommand implements CommandExecutor {
 
             //If not found, inform command issuer
             if (member == null){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.PlayerNotFound")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.PlayerNotFound")));
                 return true;
             }
 
             //Remove the player form the trust list and inform the command issuer
-            plugin.getDataManager().remMember(mapid,member.getUniqueId());
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.TakeTrust")).replace("{ign}", member.getName()));
+            instance.getDataManager().remMember(mapid,member.getUniqueId());
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.TakeTrust")).replace("{ign}", member.getName()));
             return true;
         }
 
@@ -211,13 +210,13 @@ public class CopyrightCommand implements CommandExecutor {
 
             //Check if they are the copyright owner or using force
             if (!copyr.getOwner().equals(play.getUniqueId()) && !force){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.NotOwner")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.NotOwner")));
                 return true;
             }
 
             //Delete the copyright and inform the command issuer
-            plugin.getDataManager().remCopyright(mapid);
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.DeleteCopyright")));
+            instance.getDataManager().remCopyright(mapid);
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.DeleteCopyright")));
             return true;
         }
 
@@ -225,26 +224,26 @@ public class CopyrightCommand implements CommandExecutor {
 
             //Check if they are the copyright owner or using force
             if (!copyr.getOwner().equals(play.getUniqueId()) && !force){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.NotOwner")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.NotOwner")));
                 return true;
             }
 
             //Check if they entered an ign
             if (args.length == 1) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.PlayerNotFound")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.PlayerNotFound")));
                 return true;
             }
 
             //Check if the entered ign can be found
             Player newowner = Bukkit.getPlayer(args[1]);
             if (newowner == null){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.PlayerNotFound")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.PlayerNotFound")));
                 return true;
             }
 
             //Change the owner on the copy right and inform the command issuer
-            plugin.getDataManager().giveCopyright(mapid, newowner.getUniqueId());
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.GiveOwner")).replace("{ign}", newowner.getName()));
+            instance.getDataManager().giveCopyright(mapid, newowner.getUniqueId());
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.GiveOwner")).replace("{ign}", newowner.getName()));
             return true;
         }
 
@@ -252,27 +251,27 @@ public class CopyrightCommand implements CommandExecutor {
 
             //Check if they are the copyright owner or using force
             if (!copyr.getOwner().equals(play.getUniqueId()) && !force){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.NotOwner")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.NotOwner")));
                 return true;
             }
 
             //Check if the copyright has the UUID associated with public trust
-            if (copyr.getMembers().contains(plugin.PublicTrust)){
+            if (copyr.getMembers().contains(instance.PublicTrust)){
 
                 //If so remove it
-                plugin.getDataManager().remMember(mapid,plugin.PublicTrust);
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.TakePublicTrust")));
+                instance.getDataManager().remMember(mapid, instance.PublicTrust);
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.TakePublicTrust")));
                 return true;
             }
 
             //If not, add it
-            plugin.getDataManager().addMember(mapid,plugin.PublicTrust);
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.GivePublicTrust")));
+            instance.getDataManager().addMember(mapid, instance.PublicTrust);
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.GivePublicTrust")));
             return true;
         }
 
         //tell the command issuer that no matching sub command was found
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("msg.InvalidSubCommand")));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', instance.getConfig().getString("msg.InvalidSubCommand")));
         return true;
     }
 
