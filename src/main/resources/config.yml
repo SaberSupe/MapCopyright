@@ -109,5 +109,5 @@ msg:
       - "&dadd <ign> - Give player full trust."
       - "&dlist - List all players with your full trust."
       - "&dremove <ign> - Take full trust away from player."
-      - "&atogglepublic - Give everybody full trust."
+      - "&dtogglepublic - Give everybody full trust."
       - "&aLast Page"
