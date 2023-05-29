@@ -87,7 +87,7 @@ public class ItemCraftListener implements Listener {
         //If the copyright doesn't exist return
         if (copyr == null){
             //if they are locking a map, make a copyright
-            if (e.getClickedInventory().getItem(1).getType() == Material.GLASS_PANE) instance.getDataManager().addCopyright(instance.getCurMapID(), e.getWhoClicked().getUniqueId());
+            if (e.getClickedInventory().getItem(1).getType() == Material.GLASS_PANE && play.hasPermission("mapcopyright.copyright")) instance.getDataManager().addCopyright(instance.getCurMapID(), e.getWhoClicked().getUniqueId());
             return;
         }
 
