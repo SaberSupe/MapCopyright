@@ -10,6 +10,16 @@ MySQL: # For copyright storage
   username: database1
   password: 'password'
 
+manageInvisibleItemFrames: true
+InvisibleItemFrame:
+  ==: org.bukkit.inventory.ItemStack
+  v: 3120
+  type: ITEM_FRAME
+  meta:
+    ==: ItemMeta
+    meta-type: ENTITY_TAG
+    internal: H4sIAAAAAAAA/+NiYOBi4HTNK8ksqQxJTGdk4PTMK8sszkzKSWVkYAAAwtH3ph4AAAA=
+
 #Messages
 msg:
   NoCommandPerms: "&cYou do not have permission to use this command"

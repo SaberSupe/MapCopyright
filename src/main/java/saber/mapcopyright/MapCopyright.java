@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import saber.mapcopyright.commands.CopyrightCommand;
 import saber.mapcopyright.database.DataManager;
 import saber.mapcopyright.listeners.ItemCraftListener;
+import saber.mapcopyright.listeners.ItemFrameListener;
 import saber.mapcopyright.listeners.MapCreationListener;
 import saber.mapcopyright.utils.TabComplete;
 
@@ -28,6 +29,7 @@ public final class MapCopyright extends JavaPlugin {
         //Register listener
         getServer().getPluginManager().registerEvents(new ItemCraftListener(this), this);
         getServer().getPluginManager().registerEvents(new MapCreationListener(this), this);
+        if (getConfig().getBoolean("manageInvisibleItemFrames")) getServer().getPluginManager().registerEvents(new ItemFrameListener(this), this);
 
         //initialize the data manager for all the stored data
         dataman = new DataManager(this);
