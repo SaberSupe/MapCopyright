@@ -39,7 +39,7 @@ public class ItemFrameListener implements Listener {
         dropLocations.add(frame.getLocation());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemFrameDrop(ItemSpawnEvent event){
         if (!event.getEntity().getItemStack().getType().equals(Material.ITEM_FRAME)) return;
         for (int i = 0; i < dropLocations.size(); i++){
@@ -63,7 +63,7 @@ public class ItemFrameListener implements Listener {
 
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemFrameInteract(PlayerInteractEntityEvent event){
         if (!event.getRightClicked().getType().equals(EntityType.ITEM_FRAME)) return;
         ItemFrame frame = (ItemFrame) event.getRightClicked();
@@ -72,7 +72,7 @@ public class ItemFrameListener implements Listener {
         frame.setVisible(false);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemFrameDamage(EntityDamageEvent event){
         if (!event.getEntity().getType().equals(EntityType.ITEM_FRAME)) return;
         ItemFrame frame = (ItemFrame) event.getEntity();
