@@ -28,7 +28,7 @@ public class ItemFrameListener implements Listener {
         invisibleItemFrame = instance.getConfig().getItemStack("InvisibleItemFrame");
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemFrameBreak(HangingBreakEvent event){
         Hanging hanging = event.getEntity();
         if (!hanging.getType().equals(EntityType.ITEM_FRAME)) return;
@@ -39,7 +39,7 @@ public class ItemFrameListener implements Listener {
         dropLocations.add(frame.getLocation());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemFrameDrop(ItemSpawnEvent event){
         if (!event.getEntity().getItemStack().getType().equals(Material.ITEM_FRAME)) return;
         for (int i = 0; i < dropLocations.size(); i++){
@@ -53,7 +53,7 @@ public class ItemFrameListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemFramePlace(HangingPlaceEvent event){
         if (!event.getEntity().getType().equals(EntityType.ITEM_FRAME)) return;
         ItemFrame frame = (ItemFrame) event.getEntity();
@@ -63,7 +63,7 @@ public class ItemFrameListener implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemFrameInteract(PlayerInteractEntityEvent event){
         if (!event.getRightClicked().getType().equals(EntityType.ITEM_FRAME)) return;
         ItemFrame frame = (ItemFrame) event.getRightClicked();
@@ -72,7 +72,7 @@ public class ItemFrameListener implements Listener {
         frame.setVisible(false);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemFrameDamage(EntityDamageEvent event){
         if (!event.getEntity().getType().equals(EntityType.ITEM_FRAME)) return;
         ItemFrame frame = (ItemFrame) event.getEntity();
