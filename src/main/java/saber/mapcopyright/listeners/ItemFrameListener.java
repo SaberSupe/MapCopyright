@@ -1,5 +1,6 @@
 package saber.mapcopyright.listeners;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
@@ -12,15 +13,17 @@ import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import saber.mapcopyright.MapCopyright;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ItemFrameListener implements Listener {
 
     public MapCopyright instance;
-    private final List<Location> dropLocations = new ArrayList<>();
+    private final HashMap<Location,Component> dropLocations = new HashMap<>();
     private final ItemStack invisibleItemFrame;
 
     public ItemFrameListener(MapCopyright instance){
@@ -36,21 +39,29 @@ public class ItemFrameListener implements Listener {
 
         if (frame.isVisible() && !frame.isGlowing()) return;
 
-        dropLocations.add(frame.getLocation());
+        dropLocations.put(frame.getLocation(),frame.customName());
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemFrameDrop(ItemSpawnEvent event){
         if (!event.getEntity().getItemStack().getType().equals(Material.ITEM_FRAME)) return;
-        for (int i = 0; i < dropLocations.size(); i++){
-            if (dropLocations.get(i).getBlockX() == event.getLocation().getBlockX() &&
-                    dropLocations.get(i).getBlockY() == event.getLocation().getBlockY() &&
-                    dropLocations.get(i).getBlockZ() == event.getLocation().getBlockZ()){
-                event.getEntity().setItemStack(invisibleItemFrame.clone());
-                dropLocations.remove(i);
-                return;
+        Location dropPlace = null;
+        for (Location x : dropLocations.keySet()){
+            if (x.getBlockX() == event.getLocation().getBlockX() &&
+                    x.getBlockY() == event.getLocation().getBlockY() &&
+                    x.getBlockZ() == event.getLocation().getBlockZ()){
+
+                dropPlace = x;
+
+                ItemStack invisFrame = invisibleItemFrame.clone();
+                ItemMeta invisMeta = invisFrame.getItemMeta();
+                invisMeta.displayName(dropLocations.get(x));
+                invisFrame.setItemMeta(invisMeta);
+                event.getEntity().setItemStack(invisFrame);
+                break;
             }
         }
+        if (dropPlace != null) dropLocations.remove(dropPlace);
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -58,6 +69,10 @@ public class ItemFrameListener implements Listener {
         if (!event.getEntity().getType().equals(EntityType.ITEM_FRAME)) return;
         ItemFrame frame = (ItemFrame) event.getEntity();
         if (frame.isVisible()) return;
+
+        ItemStack frameItem = event.getItemStack();
+        if (frameItem != null && frameItem.hasItemMeta() && frameItem.getItemMeta().hasDisplayName()) frame.customName(frameItem.getItemMeta().displayName());
+
         frame.setVisible(true);
         frame.setGlowing(true);
 
