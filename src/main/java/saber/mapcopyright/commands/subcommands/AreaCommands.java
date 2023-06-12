@@ -1,5 +1,6 @@
 package saber.mapcopyright.commands.subcommands;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -23,12 +24,25 @@ public class AreaCommands {
             return;
         }
 
-        //Locate the top left chunk in the players current 8x8 chunk map area
-        int chunkx = play.getLocation().getBlockX() - 64;
-        int chunkz = play.getLocation().getBlockZ() - 64;
 
-        chunkx = chunkx - (chunkx % (16*8)) + 64;
-        chunkz = chunkz - (chunkz % (16*8)) + 64;
+        //Locate the top left chunk in the players current 8x8 chunk map area
+        int chunkx = (int) play.getLocation().getX();
+        int chunkz = (int) play.getLocation().getZ();
+
+        if (chunkx < 0) chunkx -= 65;
+        else chunkx -= 64;
+        if (chunkz < 0) chunkz -= 65;
+        else chunkz -= 64;
+
+        int movex = chunkx % (16*8);
+        int movez = chunkz % (16*8);
+
+        if (movex<0) movex += 16*8;
+        if (movez<0) movez += 16*8;
+
+        chunkx = chunkx - (movex) + 64;
+        chunkz = chunkz - (movez) + 64;
+
 
         chunkx = chunkx/16;
         chunkz = chunkz/16;
